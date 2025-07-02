@@ -425,8 +425,18 @@ function loadPartsInViewer(partsData) {
     
     partsData.forEach((partData, index) => {
         // Parse threemf data
-        const threemfData = new Uint8Array(partData.threemf);
-        const geometry = loader.parse(threemfData.buffer);
+        const threemfData = partData.threemf;
+        
+        // Ensure we have the right data format for the loader
+        let bufferData = threemfData.buffer;
+        
+        // Parse 3MF data
+        let parsedObject = loader.parse(bufferData);
+        
+        if (!parsedObject) {
+            console.error('No object returned from 3MF parser for part:', partData.name || `part_${index}`);
+            return;
+        }
         
         // Create material with part-specific color and opacity
         const color = partData.color ? partData.color : getDefaultColor(index);
@@ -439,16 +449,24 @@ function loadPartsInViewer(partsData) {
             transparent: opacity < 1.0,
             opacity: opacity
         });
-        // Create mesh
-        const mesh = new THREE.Mesh(geometry, material);
-        mesh.castShadow = true;
-        mesh.receiveShadow = true;
+        
+        // 3MF loader typically returns a Group containing meshes
+        const mesh = parsedObject;
         mesh.name = partData.name || `part_${index}`;
         
-        // Set render order for transparent objects (higher numbers render later)
-        if (material.transparent) {
-            mesh.renderOrder = 1;
-        }
+        // Apply material and shadow settings to all meshes in the group
+        mesh.traverse((child) => {
+            if (child.isMesh) {
+                child.material = material.clone();
+                child.castShadow = true;
+                child.receiveShadow = true;
+                
+                // Set render order for transparent objects
+                if (material.transparent) {
+                    child.renderOrder = 1;
+                }
+            }
+        });
         
         allMeshes.push(mesh);
         currentMeshes.push(mesh);
