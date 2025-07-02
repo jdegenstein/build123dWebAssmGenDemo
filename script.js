@@ -1,3 +1,8 @@
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { STLLoader } from 'three/addons/loaders/STLLoader.js';
+import { ThreeMFLoader } from 'three/addons/loaders/3MFLoader.js';
+
 let pyodide = null;
 let isInitialized = false;
 
@@ -167,7 +172,7 @@ function initThreeJS() {
     renderer.domElement.style.pointerEvents = 'auto';
     
     // Create controls
-    controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
     controls.screenSpacePanning = false;
@@ -408,7 +413,7 @@ function createParameterizedScript(params) {
 
 // Load parts into Three.js viewer (supports both single STL and multiple parts)
 function loadPartsInViewer(partsData) {
-    const loader = new THREE.ThreeMFLoader();
+    const loader = new ThreeMFLoader();
     
     // Remove existing meshes
     currentMeshes.forEach(mesh => {
