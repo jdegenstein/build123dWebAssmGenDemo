@@ -21,6 +21,8 @@ from js import Blob, document
 from js import window
 from pyodide.ffi import to_js
 import io
+import tempfile
+from pathlib import Path
 print("JavaScript interfaces imported")
 
 print("Attempting to import build123d...")
