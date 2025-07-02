@@ -408,7 +408,7 @@ function createParameterizedScript(params) {
 
 // Load parts into Three.js viewer (supports both single STL and multiple parts)
 function loadPartsInViewer(partsData) {
-    const loader = new THREE.STLLoader();
+    const loader = new THREE.GLTFLoader();
     
     // Remove existing meshes
     currentMeshes.forEach(mesh => {
@@ -419,9 +419,9 @@ function loadPartsInViewer(partsData) {
     const allMeshes = [];
     
     partsData.forEach((partData, index) => {
-        // Parse STL data
-        const stlData = new Uint8Array(partData.stl);
-        const geometry = loader.parse(stlData.buffer);
+        // Parse GLTF data
+        const gltfData = new Uint8Array(partData.gltf);
+        const geometry = loader.parse(gltfData.buffer);
         
         // Create material with part-specific color and opacity
         const color = partData.color ? partData.color : getDefaultColor(index);
@@ -735,7 +735,7 @@ async function runPythonCode() {
         const code = createParameterizedScript(params);
         
         // Clear previous model data
-        window.stlData = null;
+        window.gltfData = null;
         window.partsData = null;
         
         try {
@@ -820,11 +820,11 @@ buffer.getvalue()
                 
                 updateStatus(`🎉 Success! Generated ${partsData.length} parts for 3D viewer - Model generated successfully!`, `Model generated successfully! 🎉 (${partsData.length} parts)`, 'text-sm status-success');
                 
-            } else if (window.stlData) {
+            } else if (window.gltfData) {
                 // Single part format (legacy support)
-                const stlData = new Uint8Array(window.stlData);
-                currentStlBlob = new Blob([stlData], { type: 'application/octet-stream' });
-                loadPartsInViewer(stlData);
+                const gltfData = new Uint8Array(window.gltfData);
+                currentStlBlob = new Blob([gltfData], { type: 'application/octet-stream' });
+                loadPartsInViewer(gltfData);
                 
                 updateStatus('🎉 Success! Generated model for 3D viewer - Model generated successfully!', 'Model generated successfully! 🎉', 'text-sm status-success');
             } else {
