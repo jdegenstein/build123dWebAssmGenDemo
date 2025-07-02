@@ -28,20 +28,19 @@ for i, part_info in enumerate(output):
     missing_keys = [key for key in required_keys if key not in part_info]
     if missing_keys:
         raise ValueError(f"Part {i} is missing required keys: {missing_keys}")
-    
-    # Generate filename and export STL
-    filename = f"output_part_{i}_{part_info['name']}.stl"
-    export_stl(part_info['part'], filename)
-    
-    # Read STL data
-    with open(filename, 'rb') as fh:
-        stl_data = fh.read()
-    
+
+    with tempfile.NamedTemporaryFile(delete=True) as fp:
+        path = Path(fp.name)
+        export_stl(part_info['part'], path)
+        stl_data = io.BytesIO()
+        with open(path, mode='rb') as f_read:
+            stl_data.write(f_read.read())
+
     # Prepare part data for JavaScript (include opacity if specified)
     part_data = {
         'name': part_info['name'],
         'color': part_info['color'],
-        'stl': to_js(stl_data, create_pyproxies=False),
+        'stl': to_js(stl_data.getvalue(), create_pyproxies=False),
     }
     # Add opacity if specified
     if 'opacity' in part_info:
