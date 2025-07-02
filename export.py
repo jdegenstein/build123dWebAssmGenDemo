@@ -36,11 +36,19 @@ for i, part_info in enumerate(output):
         with open(path, mode='rb') as f_read:
             stl_data.write(f_read.read())
 
+    with tempfile.NamedTemporaryFile(delete=True) as fp:
+        path = Path(fp.name)
+        export_gltf(part_info['part'], path)
+        gltf_data = io.BytesIO()
+        with open(path, mode='rb') as f_read:
+            gltf_data.write(f_read.read())
+    
     # Prepare part data for JavaScript (include opacity if specified)
     part_data = {
         'name': part_info['name'],
         'color': part_info['color'],
         'stl': to_js(stl_data.getvalue(), create_pyproxies=False),
+        'gltf': to_js(gltf_data.getvalue(), create_pyproxies=False),
     }
     # Add opacity if specified
     if 'opacity' in part_info:
