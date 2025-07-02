@@ -39,7 +39,7 @@ for i, part_info in enumerate(output):
     with tempfile.NamedTemporaryFile(delete=True, suffix=".3mf") as fp:
         path = Path(fp.name)
         exporter = Mesher()
-        exporter.add_shape(solid)
+        exporter.add_shape(part_info['part'])
         exporter.write(path)
         threemf_data = io.BytesIO()
         with open(path, mode='rb') as f_read:
