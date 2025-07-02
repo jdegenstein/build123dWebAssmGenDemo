@@ -408,7 +408,7 @@ function createParameterizedScript(params) {
 
 // Load parts into Three.js viewer (supports both single STL and multiple parts)
 function loadPartsInViewer(partsData) {
-    const loader = new THREE.3MFLoader();
+    const loader = new THREE.ThreeMFLoader();
     
     // Remove existing meshes
     currentMeshes.forEach(mesh => {
