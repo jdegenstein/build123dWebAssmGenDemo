@@ -31,7 +31,7 @@ const sidebar = document.querySelector('.fixed.left-3.top-3.bottom-3');
 
 // Store the base Python script and current model data
 let basePythonScript = '';
-let currentStlBlob = null;
+let currentthreemfBlob = null;
 let currentParts = []; // Array to store multiple parts
 let scene, camera, renderer, controls, currentMeshes = [];
 
@@ -408,7 +408,7 @@ function createParameterizedScript(params) {
 
 // Load parts into Three.js viewer (supports both single STL and multiple parts)
 function loadPartsInViewer(partsData) {
-    const loader = new THREE.GLTFLoader();
+    const loader = new THREE.3MFLoader();
     
     // Remove existing meshes
     currentMeshes.forEach(mesh => {
@@ -419,9 +419,9 @@ function loadPartsInViewer(partsData) {
     const allMeshes = [];
     
     partsData.forEach((partData, index) => {
-        // Parse GLTF data
-        const gltfData = new Uint8Array(partData.gltf);
-        const geometry = loader.parse(gltfData.buffer);
+        // Parse threemf data
+        const threemfData = new Uint8Array(partData.threemf);
+        const geometry = loader.parse(threemfData.buffer);
         
         // Create material with part-specific color and opacity
         const color = partData.color ? partData.color : getDefaultColor(index);
@@ -561,10 +561,10 @@ function downloadStl() {
             
             alert(`Downloading ${currentParts.length} separate STL files. Check your downloads folder.`);
         }
-    } else if (currentStlBlob) {
+    } else if (currentthreemfBlob) {
         // Legacy single STL blob
         const filename = `model_${paramStr}_${timestamp}.stl`;
-        downloadBlob(currentStlBlob, filename);
+        downloadBlob(currentthreemfBlob, filename);
     } else {
         alert('No STL file available for download');
     }
@@ -735,7 +735,7 @@ async function runPythonCode() {
         const code = createParameterizedScript(params);
         
         // Clear previous model data
-        window.gltfData = null;
+        window.threemfData = null;
         window.partsData = null;
         
         try {
@@ -820,11 +820,11 @@ buffer.getvalue()
                 
                 updateStatus(`🎉 Success! Generated ${partsData.length} parts for 3D viewer - Model generated successfully!`, `Model generated successfully! 🎉 (${partsData.length} parts)`, 'text-sm status-success');
                 
-            } else if (window.gltfData) {
+            } else if (window.threemfData) {
                 // Single part format (legacy support)
-                const gltfData = new Uint8Array(window.gltfData);
-                currentStlBlob = new Blob([gltfData], { type: 'application/octet-stream' });
-                loadPartsInViewer(gltfData);
+                const threemfData = new Uint8Array(window.threemfData);
+                currentthreemfBlob = new Blob([threemfData], { type: 'application/octet-stream' });
+                loadPartsInViewer(threemfData);
                 
                 updateStatus('🎉 Success! Generated model for 3D viewer - Model generated successfully!', 'Model generated successfully! 🎉', 'text-sm status-success');
             } else {
