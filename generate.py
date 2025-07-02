@@ -2,7 +2,7 @@
 # {
 #   "width": {"type": "number", "default": 4, "min": 1, "max": 200, "step": 1, "label": "Width (units)", "description": "Width of the block"},
 #   "length": {"type": "number", "default": 2, "min": 1, "max": 200, "step": 1, "label": "Length (units)", "description": "Length of the block"},
-#   "height": {"type": "number", "default": 4, "min": 1, "max": 50, "step": 1, "label": "Height (units)", "description": "Height of the block"},
+#   "height": {"type": "number", "default": 4, "min": 1, "max": 50, "step": 1, "label": "Height (units)", "description": "Height of the block"}
 # }
 # PARAMETERS_END
 # TODO: look at max value for parameters
